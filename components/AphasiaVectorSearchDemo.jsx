@@ -46,70 +46,70 @@ const cardData = [
         word: "Apple",
         description: "A round fruit with red, green, or yellow skin and crisp, juicy flesh",
         category: "Food > Fruit",
-        image: "/api/placeholder/100/100"
+        image: "/images/apple.png"
     },
     {
         id: 2,
         word: "Banana",
         description: "A long curved fruit with yellow skin and soft sweet flesh",
         category: "Food > Fruit",
-        image: "/api/placeholder/100/100"
+        image: "/images/banana.png"
     },
     {
         id: 3,
         word: "Water",
         description: "Clear liquid essential for life, used for drinking and washing",
         category: "Drink > Basic",
-        image: "/api/placeholder/100/100"
+        image: "/images/water.png"
     },
     {
         id: 4,
         word: "Coffee",
         description: "Hot beverage made from roasted coffee beans",
         category: "Drink > Hot Beverage",
-        image: "/api/placeholder/100/100"
+        image: "/images/coffee.png"
     },
     {
         id: 5,
         word: "Chair",
         description: "Furniture designed for sitting with a seat, legs, and back",
         category: "Furniture > Seating",
-        image: "/api/placeholder/100/100"
+        image: "/images/chair.png"
     },
     {
         id: 6,
         word: "Table",
         description: "Furniture with a flat top and one or more legs",
         category: "Furniture > Surface",
-        image: "/api/placeholder/100/100"
+        image: "/images/table.png"
     },
     {
         id: 7,
         word: "Dog",
         description: "Four-legged domesticated animal that barks",
         category: "Animal > Pet",
-        image: "/api/placeholder/100/100"
+        image: "/images/dog.jpg"
     },
     {
         id: 8,
         word: "Cat",
         description: "Small furry domesticated animal that meows",
         category: "Animal > Pet",
-        image: "/api/placeholder/100/100"
+        image: "/images/cat.jpeg"
     },
     {
         id: 9,
         word: "Toothbrush",
         description: "Tool with bristles used for cleaning teeth",
         category: "Personal Care > Dental",
-        image: "/api/placeholder/100/100"
+        image: "/images/toothbrush.jpg"
     },
     {
         id: 10,
         word: "Comb",
         description: "Toothed device used for arranging or styling hair",
         category: "Personal Care > Hair",
-        image: "/api/placeholder/100/100"
+        image: "/images/comb.jpg"
     }
 ];
 
@@ -203,6 +203,14 @@ const levenshteinDistance = (a, b) => {
 };
 
 // Main component
+// Force proper text contrast regardless of system dark mode
+const textStyles = {
+    heading: "text-gray-900 dark:text-gray-900",
+    subheading: "text-gray-800 dark:text-gray-800",
+    paragraph: "text-gray-700 dark:text-gray-700",
+    lightText: "text-gray-600 dark:text-gray-600"
+};
+
 const AphasiaVectorSearchDemo = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
@@ -300,8 +308,8 @@ const AphasiaVectorSearchDemo = () => {
 
     return (
         <div className="p-6 max-w-4xl mx-auto bg-gray-50 rounded-lg">
-            <h1 className="text-2xl font-bold mb-2">Aphasia Communication Cards</h1>
-            <p className="text-gray-600 mb-6">Using vector search technology to find words when you can't remember them</p>
+            <h1 className={`text-2xl font-bold mb-2 ${textStyles.heading}`}>Aphasia Communication Cards</h1>
+            <p className={`mb-6 ${textStyles.lightText}`}>Using vector search technology to find words when you can't remember them</p>
 
             {/* Search bar */}
             <div className="mb-6">
@@ -322,7 +330,7 @@ const AphasiaVectorSearchDemo = () => {
 
                 {/* Demo queries */}
                 <div className="mt-4">
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">Try these example searches:</h3>
+                    <h3 className={`text-sm font-medium mb-2 ${textStyles.paragraph}`}>Try these example searches:</h3>
                     <div className="flex flex-wrap gap-2">
                         {demoQueries.map((query, index) => (
                             <button
@@ -338,7 +346,7 @@ const AphasiaVectorSearchDemo = () => {
 
                 {/* Demo typo queries */}
                 <div className="mt-3">
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">Or with typos (still works!):</h3>
+                    <h3 className={`text-sm font-medium mb-2 ${textStyles.paragraph}`}>Or with typos (still works!):</h3>
                     <div className="flex flex-wrap gap-2">
                         {demoTypos.map((query, index) => (
                             <button
@@ -356,7 +364,7 @@ const AphasiaVectorSearchDemo = () => {
             {/* Recently spoken */}
             {recentlySpoken.length > 0 && (
                 <div className="mb-6 p-4 bg-white rounded-lg shadow-sm">
-                    <h2 className="text-lg font-semibold mb-2">Recently Used</h2>
+                    <h2 className={`text-lg font-semibold mb-2 ${textStyles.subheading}`}>Recently Used</h2>
                     <div className="flex flex-wrap gap-2">
                         {recentlySpoken.map((word, index) => (
                             <button
@@ -373,7 +381,7 @@ const AphasiaVectorSearchDemo = () => {
 
             {/* Results */}
             <div className="mt-4">
-                <h2 className="text-lg font-semibold mb-3">
+                <h2 className={`text-lg font-semibold mb-3 ${textStyles.subheading}`}>
                     {searchQuery ? `Results for "${searchQuery}"` : "All Cards"}
                 </h2>
 
@@ -385,14 +393,18 @@ const AphasiaVectorSearchDemo = () => {
                                 onClick={() => speakWord(card.word)}
                                 className="border bg-white rounded-lg p-4 flex flex-col items-center cursor-pointer hover:bg-blue-50 transition shadow-sm"
                             >
-                                <img src={card.image} alt={card.word} className="w-16 h-16 mb-2 rounded" />
-                                <p className="font-bold text-lg">{card.word}</p>
-                                <p className="text-xs text-gray-500 mb-1">{card.category}</p>
+                                <img
+                                    src={card.image}
+                                    alt={card.word}
+                                    className="w-16 h-16 object-contain mb-2 rounded"
+                                />
+                                <p className={`font-bold text-lg ${textStyles.heading}`}>{card.word}</p>
+                                <p className={`text-xs mb-1 ${textStyles.lightText}`}>{card.category}</p>
 
                                 {/* Show matching score for search results */}
                                 {searchQuery && card.similarityScore !== undefined && (
                                     <div className="mt-1 w-full">
-                                        <div className="text-xs text-gray-500 mb-1">Match score:</div>
+                                        <div className={`text-xs mb-1 ${textStyles.lightText}`}>Match score:</div>
                                         <div className="w-full bg-gray-200 rounded-full h-2">
                                             <div
                                                 className="bg-blue-600 h-2 rounded-full"
@@ -406,15 +418,15 @@ const AphasiaVectorSearchDemo = () => {
                     </div>
                 ) : (
                     <div className="text-center p-8 bg-white rounded-lg border">
-                        <p className="text-gray-500">No matching cards found. Try different descriptive words.</p>
+                        <p className={textStyles.paragraph}>No matching cards found. Try different descriptive words.</p>
                     </div>
                 )}
             </div>
 
             {/* Tech explanation for your coworkers */}
             <div className="mt-12 p-4 border rounded-lg bg-white">
-                <h2 className="text-lg font-semibold mb-2">How This Works</h2>
-                <p className="mb-2">This demo simulates a vector search system for aphasia patients:</p>
+                <h2 className={`text-lg font-semibold mb-2 ${textStyles.subheading}`}>How This Works</h2>
+                <p className={`mb-2 ${textStyles.paragraph}`}>This demo simulates a vector search system for aphasia patients:</p>
                 <ol className="list-decimal pl-5 space-y-2">
                     <li>When a card is added to the system, an on-device LLM generates a semantic vector embedding capturing its meaning.</li>
                     <li>These embeddings are stored in a vector database (e.g., SQLite with vector extension).</li>
@@ -422,7 +434,7 @@ const AphasiaVectorSearchDemo = () => {
                     <li>The system finds cards with embeddings most similar to the query vector.</li>
                     <li>This semantic matching works even with misspellings or when users can't remember the exact word.</li>
                 </ol>
-                <p className="mt-3 text-sm text-gray-600">Note: This demo uses simulated vectors - a real implementation would generate these using the on-device LLM.</p>
+                <p className={`mt-3 text-sm ${textStyles.lightText}`}>Note: This demo uses simulated vectors - a real implementation would generate these using the on-device LLM.</p>
             </div>
         </div>
     );
