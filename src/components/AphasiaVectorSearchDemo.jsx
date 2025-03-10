@@ -5,6 +5,7 @@ import Card from './Card';
 import SearchBar from './SearchBar';
 import DemoQueries from './DemoQueries';
 import RecentlySpoken from './RecentlySpoken';
+import SearchHistory from './SearchHistory';
 import { textStyles } from '../styles/TextStyles';
 import { cardData } from '../data/CardData';
 import { mockEmbeddings, mockQueryEmbeddings, generateQueryEmbedding } from '../data/EmbeddingData';
@@ -15,6 +16,7 @@ const AphasiaVectorSearchDemo = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [recentlySpoken, setRecentlySpoken] = useState([]);
+    const [searchHistory, setSearchHistory] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const [demoQueries] = useState([
         "red fruit",
@@ -32,6 +34,8 @@ const AphasiaVectorSearchDemo = () => {
 
     // Perform vector search
     const performVectorSearch = (query) => {
+        if (query.trim().length < 2) return;
+
         setIsSearching(true);
 
         // Simulate network delay for demo purposes
@@ -56,6 +60,9 @@ const AphasiaVectorSearchDemo = () => {
 
                 // Set results
                 setSearchResults(sortedResults);
+
+                // Add to search history when search is performed
+                addToSearchHistory(query);
             } catch (error) {
                 console.error("Error performing search:", error);
                 setSearchResults([]);
@@ -63,6 +70,22 @@ const AphasiaVectorSearchDemo = () => {
                 setIsSearching(false);
             }
         }, 500);
+    };
+
+    // Add to search history
+    const addToSearchHistory = (query) => {
+        if (query.trim() === "") return;
+
+        setSearchHistory(prev => {
+            // Check if query already exists in history
+            if (prev.includes(query)) {
+                // Move to the front if it exists
+                return [query, ...prev.filter(q => q !== query)].slice(0, 10);
+            } else {
+                // Add to the front if it's new
+                return [query, ...prev].slice(0, 10);
+            }
+        });
     };
 
     // Handle search input change
@@ -75,6 +98,14 @@ const AphasiaVectorSearchDemo = () => {
             performVectorSearch(query);
         } else if (query.length === 0) {
             setSearchResults(cardData);
+        }
+    };
+
+    // Handle search submission
+    const handleSearchSubmit = () => {
+        if (searchQuery.trim().length > 0) {
+            performVectorSearch(searchQuery);
+            addToSearchHistory(searchQuery);
         }
     };
 
@@ -93,12 +124,39 @@ const AphasiaVectorSearchDemo = () => {
     const applyDemoQuery = (query) => {
         setSearchQuery(query);
         performVectorSearch(query);
+        // Note: addToSearchHistory now happens inside performVectorSearch
     };
 
-    // Initialize with all cards visible
+    // Apply a history item
+    const applyHistoryItem = (query) => {
+        setSearchQuery(query);
+        performVectorSearch(query);
+        // No need to add to history since it's already there
+    };
+
+    // Clear search history
+    const clearSearchHistory = () => {
+        setSearchHistory([]);
+    };
+
+    // Initialize with all cards visible and add some example search history
     useEffect(() => {
         setSearchResults(cardData);
+
+        // For demo purposes, add some initial search history items
+        setSearchHistory(["kitchen items", "sports equipment", "something for eating"]);
+
+        // In a real app, you would load from localStorage instead:
+        // const savedHistory = localStorage.getItem('searchHistory');
+        // if (savedHistory) {
+        //     setSearchHistory(JSON.parse(savedHistory));
+        // }
     }, []);
+
+    // Save search history to localStorage in a real app
+    // useEffect(() => {
+    //     localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    // }, [searchHistory]);
 
     return (
         <div className="p-6 max-w-4xl mx-auto bg-gray-50 rounded-lg">
@@ -107,11 +165,21 @@ const AphasiaVectorSearchDemo = () => {
 
             {/* Search bar */}
             <div className="mb-6">
-                <SearchBar
-                    searchQuery={searchQuery}
-                    onSearchChange={handleSearchChange}
-                    isSearching={isSearching}
-                />
+                <div className="flex gap-2">
+                    <SearchBar
+                        searchQuery={searchQuery}
+                        onSearchChange={handleSearchChange}
+                        onSearchSubmit={handleSearchSubmit}
+                        isSearching={isSearching}
+                    />
+                    <button
+                        onClick={handleSearchSubmit}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        disabled={searchQuery.trim().length < 2}
+                    >
+                        Search
+                    </button>
+                </div>
 
                 {/* Demo queries */}
                 <DemoQueries
@@ -120,6 +188,13 @@ const AphasiaVectorSearchDemo = () => {
                     onApplyQuery={applyDemoQuery}
                 />
             </div>
+
+            {/* Search history */}
+            <SearchHistory
+                searchHistory={searchHistory}
+                onHistoryItemClick={applyHistoryItem}
+                onClearHistory={clearSearchHistory}
+            />
 
             {/* Recently spoken */}
             <RecentlySpoken
