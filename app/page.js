@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import AphasiaVectorSearchDemo from '../components/AphasiaVectorSearchDemo';
+import AphasiaVectorSearchDemo from '../src/components/AphasiaVectorSearchDemo';
 
 export default function Home() {
     return (
