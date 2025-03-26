@@ -5,7 +5,6 @@ import { textStyles } from '../styles/TextStyles';
 const Card = ({ card, searchQuery, onClick }) => {
     return (
         <div
-            onClick={() => onClick(card.word)}
             className="border bg-white rounded-lg p-4 flex flex-col items-center cursor-pointer hover:bg-blue-50 transition shadow-sm"
         >
             <img

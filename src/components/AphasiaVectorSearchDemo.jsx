@@ -4,18 +4,15 @@ import TechnicalExplanation from './TechnicalExplanation';
 import Card from './Card';
 import SearchBar from './SearchBar';
 import DemoQueries from './DemoQueries';
-import RecentlySpoken from './RecentlySpoken';
 import SearchHistory from './SearchHistory';
 import { textStyles } from '../styles/TextStyles';
 import { cardData } from '../data/CardData';
 import { mockEmbeddings, mockQueryEmbeddings, generateQueryEmbedding } from '../data/EmbeddingData';
 import { cosineSimilarity, levenshteinDistance } from '../utils/VectorSearch';
-import { speakWord as speak } from '../utils/SpeechUtils';
 
 const AphasiaVectorSearchDemo = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
-    const [recentlySpoken, setRecentlySpoken] = useState([]);
     const [searchHistory, setSearchHistory] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const [demoQueries] = useState([
@@ -109,17 +106,6 @@ const AphasiaVectorSearchDemo = () => {
         }
     };
 
-    // Handle card click - speak the word
-    const speakWord = (word) => {
-        speak(word);
-
-        // Add to recently spoken
-        setRecentlySpoken(prev => {
-            const newList = [word, ...prev.filter(w => w !== word)].slice(0, 5);
-            return newList;
-        });
-    };
-
     // Apply a demo query
     const applyDemoQuery = (query) => {
         setSearchQuery(query);
@@ -196,12 +182,6 @@ const AphasiaVectorSearchDemo = () => {
                 onClearHistory={clearSearchHistory}
             />
 
-            {/* Recently spoken */}
-            <RecentlySpoken
-                recentlySpoken={recentlySpoken}
-                onWordClick={speakWord}
-            />
-
             {/* Results */}
             <div className="mt-4">
                 <h2 className={`text-lg font-semibold mb-3 ${textStyles.subheading}`}>
@@ -215,7 +195,6 @@ const AphasiaVectorSearchDemo = () => {
                                 key={card.id}
                                 card={card}
                                 searchQuery={searchQuery}
-                                onClick={speakWord}
                             />
                         ))}
                     </div>
